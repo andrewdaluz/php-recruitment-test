@@ -40,7 +40,13 @@ class WarmCommand
             $warmer->setActor($actor);
 
             foreach ($pages as $page) {
+                $now = new \DateTime('now');
+                $start = microtime(true);
+
                 $warmer->warm($page->getUrl());
+
+                $load_time = microtime(true) - $start; // in sec
+                $this->pageManager->updatePageLastView($page->getPageId(), $now->format('Y-m-d H:i:s'), $load_time);
             }
         } else {
             $output->writeln('<error>Website with ID ' . $id . ' does not exists!</error>');
